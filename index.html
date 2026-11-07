@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Piano Coach — Day 1</title>
+<meta name="theme-color" content="#eef0f4">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231f2a44'/><rect x='5' y='7' width='5' height='18' rx='1' fill='white'/><rect x='11' y='7' width='5' height='18' rx='1' fill='white'/><rect x='17' y='7' width='5' height='18' rx='1' fill='white'/><rect x='23' y='7' width='4' height='18' rx='1' fill='white'/><rect x='8.5' y='7' width='3.5' height='11' fill='%231f2a44'/><rect x='14.5' y='7' width='3.5' height='11' fill='%231f2a44'/></svg>">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo"></span>Piano Coach</div>
+  <select id="song" aria-label="Song"></select>
+  <div class="seg" id="mode" role="tablist">
+    <button data-mode="step" title="The app waits for you. No clock.">Step</button>
+    <button data-mode="play" title="Play in time with the metronome. Scored.">Play along</button>
+    <button data-mode="watch" title="Hear and see how it goes.">Watch</button>
+  </div>
+  <div class="tempo" title="Tempo (beats per minute)">
+    <button id="slower" aria-label="Slower">−</button><span><b id="bpm">60</b> BPM</span><button id="faster" aria-label="Faster">+</button>
+  </div>
+  <button id="metro" class="chip on" title="Metronome">Metronome</button>
+  <button id="mic" class="mic"><span class="dot"></span><span id="micLabel">Turn on mic</span><span class="meter"><i id="meter"></i></span></button>
+  <div class="heard" title="Last note the app heard"><small>Heard</small><b id="heard">–</b></div>
+  <button id="gear" class="icon" aria-label="Settings">⚙︎</button>
+</header>
+
+<main>
+  <section class="paper">
+    <div class="paper-head">
+      <div><h1 id="title"></h1><p id="tip"></p></div>
+      <div id="score" class="score"></div>
+    </div>
+    <div id="sheet" class="sheet"></div>
+    <div id="count" class="count"></div>
+  </section>
+
+  <section class="coach">
+    <div id="say" class="say"></div>
+    <div class="actions">
+      <button id="show" class="ghost" title="Play the next note for me (Enter)">Show me</button>
+      <button id="start" class="primary">Start</button>
+    </div>
+  </section>
+
+  <section class="piano-wrap">
+    <svg id="piano" preserveAspectRatio="xMidYMin meet"></svg>
+  </section>
+</main>
+
+<div id="results" class="modal hidden">
+  <div class="card">
+    <div id="stars" class="stars"></div>
+    <h2 id="resTitle"></h2>
+    <div id="resGrid" class="grid"></div>
+    <p id="resNote" class="note"></p>
+    <div class="row">
+      <button id="again" class="primary">Again</button>
+      <button id="slowerAgain">Slower</button>
+      <button id="nextSong">Next song</button>
+    </div>
+  </div>
+</div>
+
+<div id="settings" class="modal hidden">
+  <div class="card">
+    <h2>Settings</h2>
+    <label class="opt"><input type="checkbox" id="optLetters" checked> Letter names under notes</label>
+    <label class="opt"><input type="checkbox" id="optFingers" checked> Finger numbers above notes</label>
+    <label class="opt"><input type="checkbox" id="optGuide" checked> Hand plays along as a guide (Play along)</label>
+    <label class="opt">Metronome volume <input type="range" id="optVol" min="0" max="1.5" step="0.05" value="0.8"></label>
+    <div class="cal">
+      <div><b>Timing calibration</b><br><small id="calInfo"></small></div>
+      <button id="calibrate">Calibrate</button>
+    </div>
+    <p class="small">Input: <span id="inputs">microphone (acoustic piano)</span>. No piano nearby? Use your computer keys
+      <kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><kbd>F</kbd><kbd>G</kbd> = C D E F G (middle C up), <kbd>Z</kbd><kbd>X</kbd><kbd>C</kbd><kbd>V</kbd><kbd>B</kbd> = the octave below, or tap the keys on screen.
+      <kbd>Space</kbd> start/stop · <kbd>Enter</kbd> show me.</p>
+    <div class="row"><button id="closeSettings" class="primary">Done</button></div>
+  </div>
+</div>
+
+<script src="vendor/vexflow-bravura.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
