@@ -43,6 +43,8 @@ select {
 .mic .dot { width: 9px; height: 9px; border-radius: 50%; background: #b7bcc8; }
 .mic.on { border-color: #b6e3c4; background: #effaf2; color: #146c33; }
 .mic.on .dot { background: #19b34a; box-shadow: 0 0 0 3px rgba(25,179,74,.2); }
+.mic.midi { border-color: #b6e3c4; background: #effaf2; color: #146c33; }
+.mic.midi .dot { background: #19b34a; border-radius: 2px; }
 .meter { display: none; width: 46px; height: 6px; border-radius: 3px; background: #dbe8df; overflow: hidden; }
 .mic.on .meter { display: block; }
 .meter i { display: block; height: 100%; width: 0; background: #19b34a; transition: width .06s linear; }

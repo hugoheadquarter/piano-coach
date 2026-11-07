@@ -140,6 +140,7 @@ function matches(n, midi) {
 }
 
 function handleInput(n) {
+  if (S.midiOn && n.src === 'mic') return;
   $('heard').textContent = noteName(n.midi);
   $('heard').classList.remove('blink');
   void $('heard').offsetWidth;
@@ -412,6 +413,7 @@ async function showMe() {
 // ---------- mic ----------
 async function toggleMic() {
   await audio.init();
+  if (S.midiOn) { say('Your piano is connected by cable, so the mic isn\'t needed. Just play.'); return; }
   if (mic?.on) {
     mic.stop();
     $('mic').classList.remove('on');
@@ -485,15 +487,41 @@ function calInfoText() {
 function openSettings() {
   calInfoText();
   $('settings').classList.remove('hidden');
-  // Ask for a MIDI keyboard only here (Chrome shows a permission prompt for it).
-  if (!S.midiAsked) {
-    S.midiAsked = true;
-    startMidi(audio, (n) => { audio.init(); handleInput(n); }, (names) => {
-      S.midiOn = names.length > 0;
-      $('inputs').textContent = names.length ? 'MIDI: ' + names.join(', ') + ' + microphone' : 'microphone (acoustic piano)';
-    });
+  connectMidi();
+}
+
+// ---------- digital piano over USB (MIDI): exact keys, no mic needed ----------
+function connectMidi() {
+  if (S.midiAsked || !navigator.requestMIDIAccess) return;
+  S.midiAsked = true;
+  startMidi(audio, (n) => handleInput(n), (names) => {
+    const was = S.midiOn;
+    S.midiOn = names.length > 0;
+    S.midiNames = names;
+    inputUI();
+    if (S.midiOn && !was) say('Your piano is connected by cable — I can see every key exactly. No mic needed.');
+    if (!S.midiOn && was) say('Piano cable disconnected. Plug it back in, or turn on the mic.');
+    if (S.mode === 'step' && !S.run && S.idx < S.parsed.notes.length) setTimeout(stepTarget, 2500);
+  });
+}
+
+function inputUI() {
+  if (S.midiOn) {
+    if (mic?.on) mic.stop(); // otherwise every note would count twice (cable + speakers)
+    $('mic').classList.remove('on');
+    $('mic').classList.add('midi');
+    $('micLabel').textContent = 'Piano connected';
+    $('inputs').textContent = 'your piano over USB (' + S.midiNames.join(', ') + ')';
+  } else {
+    $('mic').classList.remove('midi');
+    $('micLabel').textContent = mic?.on ? 'Listening' : 'Turn on mic';
+    $('inputs').textContent = 'microphone (acoustic piano)';
   }
 }
+
+// Connect on the first tap/key (Chrome asks once); right away if already allowed.
+['pointerdown', 'keydown'].forEach((ev) => document.addEventListener(ev, () => { audio.init(); connectMidi(); }, { once: true }));
+navigator.permissions?.query({ name: 'midi' }).then((st) => { if (st.state === 'granted') connectMidi(); }).catch(() => {});
 
 // ---------- results / score ----------
 function updateScore() {
